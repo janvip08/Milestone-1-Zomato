@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#ffdad8",
+                        "tertiary": "#5d5c5b",
+                        "surface-tint": "#bb162c",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f3f3f3",
+                        "outline-variant": "#e4bebc",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#ffb3b1",
+                        "on-surface": "#1a1c1c",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#1b1b1b",
+                        "secondary-fixed-dim": "#f4bd6a",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#e5e2e1",
+                        "on-secondary-fixed": "#291800",
+                        "on-secondary-container": "#785000",
+                        "on-tertiary-fixed-variant": "#474746",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "inverse-surface": "#2f3131",
+                        "outline": "#8f6f6e",
+                        "primary-container": "#db313f",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#92001c",
+                        "surface-dim": "#dadada",
+                        "surface-container-highest": "#e2e2e2",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#b7122a",
+                        "on-background": "#1a1c1c",
+                        "secondary-container": "#fdc571",
+                        "surface": "#f9f9f9",
+                        "secondary-fixed": "#ffddb1",
+                        "primary-fixed-dim": "#ffb3b1",
+                        "on-surface-variant": "#5b403f",
+                        "surface-variant": "#e2e2e2",
+                        "surface-bright": "#f9f9f9",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#eeeeee",
+                        "on-primary-fixed": "#410007",
+                        "on-secondary-fixed-variant": "#614000",
+                        "background": "#f9f9f9",
+                        "secondary": "#7f5608",
+                        "on-primary-container": "#fffbff",
+                        "surface-container-high": "#e8e8e8",
+                        "tertiary-container": "#757474",
+                        "on-tertiary-container": "#fffcfb"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "md": "24px",
+                        "base": "8px",
+                        "margin-desktop": "24px",
+                        "sm": "12px",
+                        "xl": "80px",
+                        "gutter": "16px",
+                        "container-max": "1200px",
+                        "xs": "4px",
+                        "lg": "48px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["lexend"],
+                        "body-sm": ["lexend"],
+                        "title-md": ["lexend"],
+                        "headline-lg": ["lexend"],
+                        "ai-recommendation": ["lexend"],
+                        "headline-lg-mobile": ["lexend"],
+                        "headline-xl": ["lexend"],
+                        "label-caps": ["lexend"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "title-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "ai-recommendation": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "600"}],
+                        "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Lexend', sans-serif; }
+        .ai-shimmer {
+            background: linear-gradient(90deg, rgba(219, 49, 63, 0.05) 25%, rgba(219, 49, 63, 0.15) 50%, rgba(219, 49, 63, 0.05) 75%);
+            background-size: 200% 100%;
+        }
+        .ai-gradient-border {
+            border: 1px solid transparent;
+            background: linear-gradient(white, white) padding-box, linear-gradient(45deg, #b7122a, #fdc571) border-box;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #b7122a;
+        }
+        .toggle-checkbox:checked + .toggle-label .toggle-dot {
+            transform: translateX(100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile h-16 bg-surface dark:bg-on-surface">
+<div class="flex items-center">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer">menu</span>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary dark:text-primary-fixed tracking-tight">CraveAI</h1>
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden border border-outline-variant">
+<img alt="User" data-alt="A high-quality, professional headshot of a friendly young adult with a clean, minimalist background. The lighting is soft and high-key, emphasizing a modern corporate aesthetic. The color palette is composed of soft neutrals and whites with a very subtle red accent, matching a clean light-mode UI design. The mood is welcoming and sophisticated." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAL62I0XjaA9j63yJSExOPHUZlcN2zEtuWDUnUyi88u7dInze-BL3lPpePuvZNBXhLbb06fQeuNv31aFwfr4j3793BXIj8DeUVrPl3SmJ5DPszpSgAGYWzQiKh55W_SPWjwe7s-R-mReo87DpQsdb98awucjGied7EClwV181hu2o4qGe8fHfDfRLtowyanSD42NXzILbpZCl2NTq9EEKucDb6h_caTxnV9fMIKnhr1cf45Z3a66AAR12GP0pIr-Cnd75ACYPUdWiE"/>
+</div>
+</header>
+<main class="pt-20 px-margin-mobile max-w-container-max mx-auto">
+<!-- Header Section -->
+<section class="mb-lg">
+<h2 class="font-headline-xl text-headline-xl text-on-surface mb-xs">Refine Your Flavor</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-lg">Our AI analyzes your preferences to find the perfect bite. Adjust the filters below to get started.</p>
+</section>
+<!-- Filters Container -->
+<div class="space-y-lg">
+<!-- Budget Section -->
+<section>
+<h3 class="font-title-md text-title-md mb-md flex items-center gap-2">
+                    Budget
+                    <span class="material-symbols-outlined text-primary scale-75">payments</span>
+</h3>
+<div class="flex gap-sm overflow-x-auto pb-2 scrollbar-hide">
+<button class="px-6 py-3 rounded-xl border border-outline-variant bg-surface-container-lowest text-on-surface font-body-lg hover:border-primary transition-all active:scale-95">$</button>
+<button class="px-6 py-3 rounded-xl border-2 border-primary bg-primary-fixed text-primary font-bold font-body-lg shadow-sm">$$</button>
+<button class="px-6 py-3 rounded-xl border border-outline-variant bg-surface-container-lowest text-on-surface font-body-lg hover:border-primary transition-all active:scale-95">$$$</button>
+<button class="px-6 py-3 rounded-xl border border-outline-variant bg-surface-container-lowest text-on-surface font-body-lg hover:border-primary transition-all active:scale-95">$$$$</button>
+</div>
+</section>
+<!-- Rating Section -->
+<section>
+<h3 class="font-title-md text-title-md mb-md flex items-center gap-2">
+                    Minimum Rating
+                    <span class="material-symbols-outlined text-secondary scale-75">star</span>
+</h3>
+<div class="flex gap-sm">
+<button class="flex-1 py-3 rounded-xl border border-outline-variant bg-surface-container-lowest text-on-surface font-body-lg hover:bg-surface-variant transition-all">Any</button>
+<button class="flex-1 py-3 rounded-xl border border-outline-variant bg-surface-container-lowest text-on-surface font-body-lg hover:bg-surface-variant transition-all flex items-center justify-center gap-1">4.0 <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span></button>
+<button class="flex-1 py-3 rounded-xl border-2 border-secondary bg-secondary-fixed text-on-secondary-fixed font-bold font-body-lg flex items-center justify-center gap-1">4.5 <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span></button>
+</div>
+</section>
+<!-- Cuisine Section -->
+<section>
+<div class="flex justify-between items-center mb-md">
+<h3 class="font-title-md text-title-md flex items-center gap-2">
+                        Cuisine
+                        <span class="material-symbols-outlined text-primary scale-75">restaurant_menu</span>
+</h3>
+<span class="font-label-caps text-label-caps text-primary cursor-pointer">Clear All</span>
+</div>
+<div class="flex flex-wrap gap-base">
+<span class="px-4 py-2 rounded-full border border-outline-variant bg-surface-container-lowest text-on-surface font-body-sm cursor-pointer hover:bg-primary-fixed hover:border-primary transition-colors">Italian</span>
+<span class="px-4 py-2 rounded-full bg-primary text-on-primary font-bold font-body-sm cursor-pointer shadow-md flex items-center gap-1">Japanese <span class="material-symbols-outlined text-sm">close</span></span>
+<span class="px-4 py-2 rounded-full border border-outline-variant bg-surface-container-lowest text-on-surface font-body-sm cursor-pointer hover:bg-primary-fixed hover:border-primary transition-colors">Mexican</span>
+<span class="px-4 py-2 rounded-full border border-outline-variant bg-surface-container-lowest text-on-surface font-body-sm cursor-pointer hover:bg-primary-fixed hover:border-primary transition-colors">Indian</span>
+<span class="px-4 py-2 rounded-full border border-outline-variant bg-surface-container-lowest text-on-surface font-body-sm cursor-pointer hover:bg-primary-fixed hover:border-primary transition-colors">Chinese</span>
+<span class="px-4 py-2 rounded-full border border-outline-variant bg-surface-container-lowest text-on-surface font-body-sm cursor-pointer hover:bg-primary-fixed hover:border-primary transition-colors">Thai</span>
+<span class="px-4 py-2 rounded-full border border-outline-variant bg-surface-container-lowest text-on-surface font-body-sm cursor-pointer hover:bg-primary-fixed hover:border-primary transition-colors">French</span>
+<span class="px-4 py-2 rounded-full border border-outline-variant bg-surface-container-lowest text-on-surface font-body-sm cursor-pointer hover:bg-primary-fixed hover:border-primary transition-colors flex items-center gap-1">
+                        AI Pick <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</span>
+</div>
+</section>
+<!-- Dietary Preferences Section -->
+<section class="bg-surface-container-low rounded-xl p-md">
+<h3 class="font-title-md text-title-md mb-md flex items-center gap-2">
+                    Dietary Requirements
+                    <span class="material-symbols-outlined text-tertiary scale-75">settings_heart</span>
+</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<!-- Vegetarian Toggle -->
+<div class="flex items-center justify-between p-3 bg-surface rounded-lg shadow-sm">
+<span class="font-body-lg text-on-surface">Vegetarian</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only toggle-checkbox" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant rounded-full transition-colors toggle-label">
+<div class="toggle-dot absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform shadow-md"></div>
+</div>
+</label>
+</div>
+<!-- Gluten-Free Toggle -->
+<div class="flex items-center justify-between p-3 bg-surface rounded-lg shadow-sm">
+<span class="font-body-lg text-on-surface">Gluten-Free</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only toggle-checkbox" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant rounded-full transition-colors toggle-label">
+<div class="toggle-dot absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform shadow-md"></div>
+</div>
+</label>
+</div>
+<!-- Non-Vegetarian Toggle -->
+<div class="flex items-center justify-between p-3 bg-surface rounded-lg shadow-sm">
+<span class="font-body-lg text-on-surface">Non-Vegetarian</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only toggle-checkbox" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant rounded-full transition-colors toggle-label">
+<div class="toggle-dot absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform shadow-md"></div>
+</div>
+</label>
+</div>
+<!-- Halal Toggle -->
+<div class="flex items-center justify-between p-3 bg-surface rounded-lg shadow-sm">
+<span class="font-body-lg text-on-surface">Vegan</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only toggle-checkbox" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant rounded-full transition-colors toggle-label">
+<div class="toggle-dot absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform shadow-md"></div>
+</div>
+</label>
+</div>
+</div>
+</section>
+</div>
+<!-- Sticky Recommendation Action -->
+<div class="fixed bottom-20 left-0 w-full px-margin-mobile py-4 bg-gradient-to-t from-surface via-surface/90 to-transparent flex justify-center pointer-events-none">
+<button class="pointer-events-auto w-full max-w-md h-16 bg-primary text-on-primary rounded-xl font-headline-lg-mobile text-headline-lg-mobile shadow-lg shadow-primary/20 flex items-center justify-center gap-3 active:scale-95 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                AI Recommend!
+            </button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-base pb-4 pt-2 bg-surface/90 backdrop-blur-md border-t border-outline-variant dark:border-outline shadow-md rounded-t-xl">
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined">restaurant</span>
+<span class="font-label-caps text-label-caps">Discover</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined">favorite</span>
+<span class="font-label-caps text-label-caps">Favorites</span>
+</div>
+<!-- Active Tab: AI Magic -->
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-4 py-1">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-label-caps text-label-caps">AI Magic</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-caps text-label-caps">Profile</span>
+</div>
+</nav>
+</body></html>

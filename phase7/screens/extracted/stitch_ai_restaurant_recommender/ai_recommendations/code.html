@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CraveAI - Discover Your Next Meal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-fixed": "#ffdad8",
+                    "tertiary": "#5d5c5b",
+                    "surface-tint": "#bb162c",
+                    "error": "#ba1a1a",
+                    "on-primary": "#ffffff",
+                    "surface-container-low": "#f3f3f3",
+                    "outline-variant": "#e4bebc",
+                    "inverse-on-surface": "#f1f1f1",
+                    "on-error": "#ffffff",
+                    "inverse-primary": "#ffb3b1",
+                    "on-surface": "#1a1c1c",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-fixed": "#1b1b1b",
+                    "secondary-fixed-dim": "#f4bd6a",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed": "#e5e2e1",
+                    "on-secondary-fixed": "#291800",
+                    "on-secondary-container": "#785000",
+                    "on-tertiary-fixed-variant": "#474746",
+                    "tertiary-fixed-dim": "#c8c6c5",
+                    "inverse-surface": "#2f3131",
+                    "outline": "#8f6f6e",
+                    "primary-container": "#db313f",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed-variant": "#92001c",
+                    "surface-dim": "#dadada",
+                    "surface-container-highest": "#e2e2e2",
+                    "surface-container-lowest": "#ffffff",
+                    "primary": "#b7122a",
+                    "on-background": "#1a1c1c",
+                    "secondary-container": "#fdc571",
+                    "surface": "#f9f9f9",
+                    "secondary-fixed": "#ffddb1",
+                    "primary-fixed-dim": "#ffb3b1",
+                    "on-surface-variant": "#5b403f",
+                    "surface-variant": "#e2e2e2",
+                    "surface-bright": "#f9f9f9",
+                    "on-tertiary": "#ffffff",
+                    "surface-container": "#eeeeee",
+                    "on-primary-fixed": "#410007",
+                    "on-secondary-fixed-variant": "#614000",
+                    "background": "#f9f9f9",
+                    "secondary": "#7f5608",
+                    "on-primary-container": "#fffbff",
+                    "surface-container-high": "#e8e8e8",
+                    "tertiary-container": "#757474",
+                    "on-tertiary-container": "#fffcfb"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "md": "24px",
+                    "base": "8px",
+                    "margin-desktop": "24px",
+                    "sm": "12px",
+                    "xl": "80px",
+                    "gutter": "16px",
+                    "container-max": "1200px",
+                    "xs": "4px",
+                    "lg": "48px"
+            },
+            "fontFamily": {
+                    "body-lg": ["lexend"],
+                    "body-sm": ["lexend"],
+                    "title-md": ["lexend"],
+                    "headline-lg": ["lexend"],
+                    "ai-recommendation": ["lexend"],
+                    "headline-lg-mobile": ["lexend"],
+                    "headline-xl": ["lexend"],
+                    "label-caps": ["lexend"]
+            },
+            "fontSize": {
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "title-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "ai-recommendation": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "600"}],
+                    "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      .ai-gradient-border {
+        position: relative;
+        background: #fff;
+        background-clip: padding-box;
+        border: 2px solid transparent;
+      }
+      .ai-gradient-border::before {
+        content: '';
+        position: absolute;
+        top: -2px; bottom: -2px;
+        left: -2px; right: -2px;
+        z-index: -1;
+        border-radius: inherit;
+        background: linear-gradient(45deg, #b7122a, #fdc571, #b7122a);
+        background-size: 200% 200%;
+      }
+      .shimmer-text {
+        background: linear-gradient(90deg, #5b403f 25%, #b7122a 50%, #5b403f 75%);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body-lg text-on-surface min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile h-16 bg-surface dark:bg-on-surface shadow-sm">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary dark:text-primary-fixed-dim hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 duration-100 ease-in-out">
+                menu
+            </button>
+<h1 class="font-headline-lg text-primary dark:text-primary-fixed tracking-tight">CraveAI</h1>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-fixed">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A professional studio headshot of a young adult with a friendly expression. The lighting is soft and even, characteristic of a high-end corporate portrait. The background is a neutral, light gray, maintaining a clean and modern aesthetic that aligns with a premium app interface. The overall color palette is muted, focusing on natural skin tones and clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHIyoJ5pFPtl-mHT3rlBGkWjXaMze9P77R6nNJtA6PG1Ym5YUgsy-v9ur8Bobp5MDYhxFAtPVox6OR6aDhaiYTWWvmi4nwaidqLSOZtUnqB8uKv_OeAY5QA-D2QMsiw5apMuJ_OvKEjOJhIeNGtRuvB07POqWHhmkPuY3Q_9Rc0ZMd62FprURCNajUXp9Bf9IzqyG0_0w3OQ0waQRpByNndTiI4S_EbN0ActCzFso7XHi_X6jip7hv87h6el8IaeOSpSmO6VecjJQ"/>
+</div>
+</div>
+</header>
+<main class="pt-20 pb-32 px-margin-mobile max-w-container-max mx-auto">
+<!-- Search & Header Section -->
+<section class="mb-lg">
+<div class="flex flex-col gap-sm mb-md">
+<h2 class="font-headline-xl text-on-surface">Hungry for more?</h2>
+<p class="text-on-surface-variant font-body-lg">AI-powered recommendations based on your cravings.</p>
+</div>
+<div class="relative group">
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-primary">auto_awesome</span>
+</div>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-lowest border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all font-body-lg shimmer-text" placeholder="Surprise me with something spicy..." type="text"/>
+</div>
+</section>
+<!-- AI Recommendations Section -->
+<section class="mb-lg">
+<div class="flex items-center justify-between mb-md">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-weight="fill" style="font-variation-settings: 'FILL' 1;">colors_spark</span>
+<h3 class="font-title-md text-on-surface">Curated Just for You</h3>
+</div>
+<button class="text-primary font-label-caps hover:underline">VIEW ALL</button>
+</div>
+<!-- Bento Grid Layout for Restaurants -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- Restaurant Card 1: TOP CHOICE -->
+<div class="ai-gradient-border rounded-xl overflow-hidden shadow-[0px_4px_12px_rgba(0,0,0,0.05)] hover:shadow-lg transition-all transform hover:-translate-y-1">
+<div class="relative aspect-[16/9]">
+<img class="w-full h-full object-cover" data-alt="A high-fidelity photograph of an upscale Italian restaurant's signature pasta dish, featuring handmade tagliatelle with rich truffle sauce. The plate is garnished with fresh herbs and shaved parmesan. The lighting is warm and cinematic, casting soft shadows on a rustic wooden table. The overall mood is luxurious and appetizing, perfectly fitting a top-tier food discovery application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDL0vhNSPzJb5FrCUDsJzegvy8-UoNnbKaDRGIblNMbwMrfKBTR_6_ZYd5lH1hO4COq081hyq5m2IBZWbCOaWgTLh7KS3EACKTLuN9Uxte78bqF-Fhv1n1I2gYndT8H3jmKkWcxG2a22ue0IBsZmBXLGDvGAZNFkFFhRJ3fzNKyHfyBQxWwXPmIJLwWADYkaYka4-YAQ1spMXity78dy4QQojdU0kdxEOfr6vA5ph8DPPPt1ph-Cs4GOm01RlRLEKA9zN3SBoZKBXM"/>
+<div class="absolute top-4 left-4 bg-primary text-on-primary px-3 py-1 rounded-full flex items-center gap-1 shadow-md">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+<span class="font-label-caps">Top Choice</span>
+</div>
+<div class="absolute bottom-4 right-4 bg-secondary-container text-on-secondary-container px-2 py-1 rounded-lg flex items-center gap-1 font-title-md">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                            4.8
+                        </div>
+</div>
+<div class="p-md">
+<div class="flex justify-between items-start mb-xs">
+<h4 class="font-title-md text-on-surface">The Truffle Table</h4>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">favorite</span>
+</div>
+<p class="text-on-surface-variant font-body-sm mb-base">Italian • Artisanal Pasta • Fine Dining</p>
+<div class="flex items-center gap-md pt-base border-t border-outline-variant">
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+                                25-35 min
+                            </div>
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+                                Cost for two: ₹1,200
+                            </div>
+</div>
+</div>
+</div>
+<!-- Restaurant Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0px_4px_12px_rgba(0,0,0,0.05)] border border-outline-variant hover:shadow-lg transition-all transform hover:-translate-y-1">
+<div class="relative aspect-[16/9]">
+<img class="w-full h-full object-cover" data-alt="A close-up shot of a vibrant, artisanal pizza with bubbling mozzarella, fresh basil leaves, and a thin, charred sourdough crust. The lighting is bright and natural, suggesting an airy, modern pizzeria environment. The colors are vivid, with the deep red of the tomato sauce providing a strong visual anchor against the white plate and wooden background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuANdAMAKknLs98L56oqrb1mNhzS2oaIQrbML8IpNFQqZi55C52EiqsszngPRec1nhZihy-BAVqotd_2Lr8rvue8G6MsoOksnQR_V3qJNS3706d_4YCchWDfmrlqSRjnURlGjrYzFWMiPcnl1OYMVYhdylw-aYhYmoaig16fYVaEjtiwKHIN9btmEkxXTn-Wx--xcBzBHsdkgTxzQhZOgWwck5bIrncEp1oN3UVZwRi0l73O1nXKCPXYbZCSGnd8Iiuy5JEx9Vp-aaQ"/>
+<div class="absolute bottom-4 right-4 bg-secondary-container text-on-secondary-container px-2 py-1 rounded-lg flex items-center gap-1 font-title-md">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                            4.5
+                        </div>
+</div>
+<div class="p-md">
+<div class="flex justify-between items-start mb-xs">
+<h4 class="font-title-md text-on-surface">Neo Pizza Lab</h4>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">favorite</span>
+</div>
+<p class="text-on-surface-variant font-body-sm mb-base">Pizzeria • Sourdough • Italian</p>
+<div class="flex items-center gap-md pt-base border-t border-outline-variant">
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+                                20-30 min
+                            </div>
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+                                Cost for two: ₹800
+                            </div>
+</div>
+</div>
+</div>
+<!-- Restaurant Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0px_4px_12px_rgba(0,0,0,0.05)] border border-outline-variant hover:shadow-lg transition-all transform hover:-translate-y-1">
+<div class="relative aspect-[16/9]">
+<img class="w-full h-full object-cover" data-alt="A beautifully composed healthy grain bowl featuring avocado slices, poached eggs, roasted chickpeas, and vibrant greens. The photography is clean and high-key, emphasizing freshness and nutritional value. The bowl is placed on a marble surface, creating a sophisticated and modern look that appeals to health-conscious users of a premium food app." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoM3s0M5Lpu7DFb5u9OOwJkvWm5B2P4yTnaEwdVkAs0eyYk4uMWLuAHL8NeezdzYWiuBZ7okw1ls7IH_lJpJRI5bwnqWnEiBxZc6uK9JEU0pi4PrbiyBsv3vsYhsTKJhKV1XCM7ZqKeG18eGotM65bbi6DK_n06mRCJeWnTImdCEx_VvBb1euqr3ET6G6zk3LJeDqkfuwabAg5fwavKE4813HonmdQnlacreG4nyP9-G5I7c4g2ria9Md__AzZQYxtIGr_orDBmfQ"/>
+<div class="absolute bottom-4 right-4 bg-secondary-container text-on-secondary-container px-2 py-1 rounded-lg flex items-center gap-1 font-title-md">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                            4.7
+                        </div>
+</div>
+<div class="p-md">
+<div class="flex justify-between items-start mb-xs">
+<h4 class="font-title-md text-on-surface">Pure Greens</h4>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">favorite</span>
+</div>
+<p class="text-on-surface-variant font-body-sm mb-base">Healthy • Vegan Options • Bowls</p>
+<div class="flex items-center gap-md pt-base border-t border-outline-variant">
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+                                30-40 min
+                            </div>
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+                                Cost for two: ₹500
+                            </div>
+</div>
+</div>
+</div>
+<!-- Restaurant Card 4 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0px_4px_12px_rgba(0,0,0,0.05)] border border-outline-variant hover:shadow-lg transition-all transform hover:-translate-y-1">
+<div class="relative aspect-[16/9]">
+<img class="w-full h-full object-cover" data-alt="A steaming plate of authentic dim sum served in traditional bamboo baskets. Each piece is meticulously crafted with translucent dough. The atmosphere is traditional yet refined, with steam rising gracefully in the soft, morning light. The color palette focuses on neutral earth tones with pops of green from garnishes, evoking a sense of heritage and high quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzOyxi3iTBCjEDqzJGuR0KkKf8lyHkL6GdGSvSxBsSg9PLK-efIzmZps03r-AyP8cSMfmhbBAI_RCDvoDl7VbMm9S88pXh1SaiIo598fIMQYNldOS1QkTQiGjp_oalZcx7pgHec_7VXgXRWUkupCQzi1Ep5MyQeaNvmMRkxmwXt0JSH5Vc-dzq9qnrHUzPG7IisTuPRdLGEvQYO-mJN8y4q0_BGcQOtXARJ_LesmSvLVvgJgiNZZTYo1yN9ASDEMjBTDPAFcvD5iA"/>
+<div class="absolute bottom-4 right-4 bg-secondary-container text-on-secondary-container px-2 py-1 rounded-lg flex items-center gap-1 font-title-md">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                            4.4
+                        </div>
+</div>
+<div class="p-md">
+<div class="flex justify-between items-start mb-xs">
+<h4 class="font-title-md text-on-surface">Bamboo House</h4>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">favorite</span>
+</div>
+<p class="text-on-surface-variant font-body-sm mb-base">Chinese • Dim Sum • Cantonese</p>
+<div class="flex items-center gap-md pt-base border-t border-outline-variant">
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+                                35-45 min
+                            </div>
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+                                Cost for two: ₹750
+                            </div>
+</div>
+</div>
+</div>
+<!-- Restaurant Card 5 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0px_4px_12px_rgba(0,0,0,0.05)] border border-outline-variant hover:shadow-lg transition-all transform hover:-translate-y-1">
+<div class="relative aspect-[16/9]">
+<img class="w-full h-full object-cover" data-alt="A decadent gourmet burger stacked with premium beef, melted cheddar, caramelized onions, and fresh brioche bun. The shot is an extreme close-up, highlighting the texture of the meat and the sheen of the sauce. The lighting is dramatic and warm, creating a high-energy 'food-first' visual that drives cravings. Dark, moody background elements contrast with the bright primary food subject." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNpETIGDI9PFl5Mc_7zW3VgH40rf_v6jiJpb-Z0EY4XrgSDlWSpvr2z6fgeUv7NQ1hdXMD3n5y3w7GgixlRGELeBXgSAlzouWhlCzVpPSENyOmO-_nQeoFOmxaOb_lreqMQFJflIKH88iFI8WM4Fy_A-9uefrkkyhP5yNnBJj7PVB-roNDz_akgxmIJiHYRz292lw4q3dKyQh-Zk8Hi0BQzlxneR5Z3Rpx_GCYhxCHQo118Lxaznhd9ifVh9ukebJ2ZCGm7lXJros"/>
+<div class="absolute bottom-4 right-4 bg-secondary-container text-on-secondary-container px-2 py-1 rounded-lg flex items-center gap-1 font-title-md">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                            4.6
+                        </div>
+</div>
+<div class="p-md">
+<div class="flex justify-between items-start mb-xs">
+<h4 class="font-title-md text-on-surface">Burger Theory</h4>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">favorite</span>
+</div>
+<p class="text-on-surface-variant font-body-sm mb-base">American • Burgers • Shakes</p>
+<div class="flex items-center gap-md pt-base border-t border-outline-variant">
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+                                20-30 min
+                            </div>
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+                                Cost for two: ₹600
+                            </div>
+</div>
+</div>
+</div>
+<!-- Restaurant Card 6 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0px_4px_12px_rgba(0,0,0,0.05)] border border-outline-variant hover:shadow-lg transition-all transform hover:-translate-y-1">
+<div class="relative aspect-[16/9]">
+<img class="w-full h-full object-cover" data-alt="A colorful and artistic sushi platter with a variety of nigiri and specialty rolls, presented on a dark slate board. The presentation is meticulous, with micro-greens and edible flowers as garnish. The lighting is cool and professional, emphasizing the freshness of the seafood. This minimalist yet vibrant composition reflects a high-end culinary experience typical of top-rated sushi establishments." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQ5W8iFd6ZCh9IkzLJDsxccf-ww5ySVjgaATOjY0_aGSg66ksZE48dH9IFv90KO4o_eLNfCy5farcbWmBypH0btzc0ZqMDYEQeXVDsBva1rpbFaJL9XRI0s98jMIJqoAKhbXonQHbQBBg2ctEr48OFevuyD4cpua9J8TTEi0JQin68ALvmxujveRimagzV2PNZGOrexrTzKwLjeTXU3NNFDVs2S_AOwYgo1PY_OSibTpXmWZNgLQOdIhodbswa9TzOpopdNyWMC2I"/>
+<div class="absolute bottom-4 right-4 bg-secondary-container text-on-secondary-container px-2 py-1 rounded-lg flex items-center gap-1 font-title-md">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                            4.9
+                        </div>
+</div>
+<div class="p-md">
+<div class="flex justify-between items-start mb-xs">
+<h4 class="font-title-md text-on-surface">Orizuru Sushi</h4>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">favorite</span>
+</div>
+<p class="text-on-surface-variant font-body-sm mb-base">Japanese • Sushi • Seafood</p>
+<div class="flex items-center gap-md pt-base border-t border-outline-variant">
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+                                40-50 min
+                            </div>
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+                                Cost for two: ₹1,500
+                            </div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- AI Recommendation Strip -->
+<section class="mb-lg">
+<div class="bg-primary-container p-md rounded-2xl flex flex-col md:flex-row items-center gap-md shadow-lg">
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-xs">
+<span class="material-symbols-outlined text-on-primary-container">auto_awesome</span>
+<span class="font-ai-recommendation text-on-primary-container uppercase tracking-wider">Generated for you</span>
+</div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-on-primary-container">Try a spicy fusion night?</h2>
+<p class="text-on-primary-container/90 font-body-lg">We noticed you love Indo-Chinese and Thai. Based on your history, "Wok Fusion" is 98% match for you tonight.</p>
+</div>
+<button class="bg-surface-container-lowest text-primary px-lg py-sm rounded-xl font-title-md flex items-center gap-2 hover:bg-surface-bright transition-all active:scale-95">
+                    Order Now
+                    <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-base pb-4 pt-2 bg-surface dark:bg-inverse-surface border-t border-outline-variant dark:border-outline backdrop-blur-md shadow-md">
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-4 py-1 active:scale-90 duration-150 transition-all cursor-pointer">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">restaurant</span>
+<span class="font-label-caps text-label-caps">Discover</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:text-primary transition-all active:scale-90 duration-150 cursor-pointer">
+<span class="material-symbols-outlined">favorite</span>
+<span class="font-label-caps text-label-caps">Favorites</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:text-primary transition-all active:scale-90 duration-150 cursor-pointer">
+<span class="material-symbols-outlined">auto_awesome</span>
+<span class="font-label-caps text-label-caps">AI Magic</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:text-primary transition-all active:scale-90 duration-150 cursor-pointer">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-caps text-label-caps">Profile</span>
+</div>
+</nav>
+</body></html>

@@ -1,296 +1,150 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { useUserProfileStore, useCurrentProfile } from '@/lib/user-profile-store'
-import { useHybridRanking } from '@/lib/hybrid-ranking'
-import { useMultiCityStore } from '@/lib/multi-city-optimization'
-import { useABTestingStore } from '@/lib/ab-testing-framework'
+import { useRouter } from 'next/navigation'
 
 export default function HomePage() {
-  const [recommendations, setRecommendations] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
-  
-  const currentProfile = useCurrentProfile()
-  const { rankRestaurants } = useHybridRanking()
-  const { detectUserLocation, currentCity } = useMultiCityStore()
-  const { getActiveExperiments } = useABTestingStore()
-  
-  const activeExperiments = getActiveExperiments()
-  
-  useEffect(() => {
-    // Initialize user location detection
-    if (!currentCity) {
-      detectUserLocation()
-    }
-    
-    // Load active experiments
-    if (activeExperiments.length > 0) {
-      console.log('Active experiments:', activeExperiments)
-    }
-  }, [detectUserLocation, currentCity, activeExperiments])
-  
-  const handleGetRecommendations = async () => {
-    if (!currentProfile) {
-      alert('Please create a profile first')
-      return
-    }
-    
-    setIsLoading(true)
-    
-    try {
-      const preferences = {
-        location: currentProfile.preferences.preferredLocations[0] || 'Bangalore',
-        cuisine: currentProfile.preferences.cuisine[0] || 'Italian',
-        maxCostForTwo: 1000,
-        occasion: 'dinner'
-      }
-      
-      // Get sample restaurants (in real app, this would come from API)
-      const sampleRestaurants = [
-        {
-          id: '1',
-          name: 'Trattoria Italiana',
-          rating: 4.5,
-          costForTwo: 800,
-          cuisine: 'Italian',
-          distance: 2.5,
-          popularity: 150
-        },
-        {
-          id: '2',
-          name: 'Pasta Paradise',
-          rating: 4.2,
-          costForTwo: 600,
-          cuisine: 'Italian',
-          distance: 3.1,
-          popularity: 120
-        },
-        {
-          id: '3',
-          name: 'Pizza Express',
-          rating: 4.8,
-          costForTwo: 750,
-          cuisine: 'Italian',
-          distance: 1.8,
-          popularity: 200
-        }
-      ]
-      
-      const results = await rankRestaurants(preferences, sampleRestaurants)
-      setRecommendations(results)
-    } catch (error) {
-      console.error('Error getting recommendations:', error)
-      alert('Failed to get recommendations. Please try again.')
-    } finally {
-      setIsLoading(false)
-    }
+  const router = useRouter()
+
+  const handleGetStarted = () => {
+    router.push('/preferences')
   }
-  
+
   return (
-    <div className="container mx-auto p-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Welcome Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Welcome to Advanced Restaurant Recommendations</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <p className="text-gray-600">
-                Experience personalized restaurant recommendations powered by AI, vector search, and hybrid ranking algorithms.
-              </p>
-              
-              {currentProfile ? (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Profile:</span>
-                    <Badge variant="secondary">{currentProfile.name}</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Current City:</span>
-                    <Badge variant="outline">
-                      {currentCity ? 'Loading...' : 'Not Set'}
-                    </Badge>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center py-4">
-                  <p className="text-gray-500 mb-4">No profile found</p>
-                  <Button onClick={() => window.location.href = '/profile'}>
-                    Create Profile
-                  </Button>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-        
-        {/* Quick Actions */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <Button 
-                onClick={handleGetRecommendations}
-                disabled={isLoading || !currentProfile}
-                className="w-full"
-              >
-                {isLoading ? 'Getting Recommendations...' : 'Get Recommendations'}
-              </Button>
-              
-              <Button 
-                variant="outline"
-                onClick={() => window.location.href = '/experiments'}
-                className="w-full"
-              >
-                A/B Testing
-              </Button>
-              
-              <Button 
-                variant="outline"
-                onClick={() => window.location.href = '/analytics'}
-                className="w-full"
-              >
-                Analytics
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-        
-        {/* Active Experiments */}
-        {activeExperiments.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Active Experiments</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {activeExperiments.map((experiment) => (
-                  <div key={experiment.id} className="flex items-center justify-between p-3 border rounded">
-                    <div>
-                      <h4 className="font-medium">{experiment.name}</h4>
-                      <p className="text-sm text-gray-600">{experiment.description}</p>
-                    </div>
-                    <Badge variant={experiment.status === 'active' ? 'default' : 'secondary'}>
-                      {experiment.status}
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-        
-        {/* Recommendations Display */}
-        {recommendations.length > 0 && (
-          <Card className="md:col-span-2 lg:col-span-3">
-            <CardHeader>
-              <CardTitle>Personalized Recommendations</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {recommendations.map((result, index) => (
-                  <div key={result.restaurantId} className="border rounded-lg p-4">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="font-semibold text-lg">
-                          {index + 1}. Restaurant {result.restaurantId}
-                        </h3>
-                        <p className="text-sm text-gray-600 mt-1">
-                          Strategy: {result.strategy}
-                        </p>
-                        <p className="text-sm text-gray-500 mt-2">
-                          {result.explanation}
-                        </p>
-                      </div>
-                      <Badge variant="outline">
-                        Score: {result.score.toFixed(3)}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-      
-      {/* Feature Highlights */}
-      <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-6">Phase 7 Advanced Features</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>🧠 Personalized Profiles</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-600">
-                User profiles with preference learning, behavior tracking, and recommendation memory.
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>🔍 Vector Search</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-600">
-                Advanced vector embeddings and similarity search for semantic restaurant matching.
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>⚖️ Hybrid Ranking</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-600">
-                Combines rule-based, vector-based, and LLM-powered ranking strategies.
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>🌍 Multi-City Support</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-600">
-                Optimized recommendations across multiple cities with location detection.
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>🧪 A/B Testing</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-600">
-                Experiment with different prompts, ranking strategies, and UI variations.
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>📊 Advanced Analytics</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-600">
-                Comprehensive analytics for experiments, user behavior, and system performance.
-              </p>
-            </CardContent>
-          </Card>
+    <div className="bg-surface text-on-surface min-h-screen">
+      {/* TopAppBar */}
+      <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile h-16 bg-surface">
+        <div className="flex items-center">
+          <span className="material-symbols-outlined text-on-surface-variant">menu</span>
         </div>
-      </div>
+        <h1 className="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">CraveAI</h1>
+        <div className="w-8 h-8 rounded-full bg-surface-variant overflow-hidden border border-outline-variant">
+          <img 
+            alt="User" 
+            src="/api/placeholder/32/32"
+            className="w-full h-full object-cover"
+          />
+        </div>
+      </header>
+
+      <main className="pt-20 px-margin-mobile max-w-container-max mx-auto">
+        {/* Hero Section */}
+        <section className="text-center py-xl">
+          <div className="mb-lg">
+            <span className="material-symbols-outlined text-primary text-6xl mb-md" style={{ fontVariationSettings: "'FILL' 1" }}>
+              restaurant
+            </span>
+          </div>
+          <h2 className="font-headline-xl text-headline-xl text-on-surface mb-md">
+            Discover Your Perfect Bite
+          </h2>
+          <p className="font-body-lg text-body-lg text-on-surface-variant max-w-lg mx-auto mb-xl">
+            AI-powered restaurant recommendations tailored to your unique preferences, budget, and taste.
+          </p>
+          
+          <button
+            onClick={handleGetStarted}
+            className="px-8 py-4 bg-primary text-on-primary rounded-xl font-headline-lg-mobile text-headline-lg-mobile shadow-lg shadow-primary/20 flex items-center justify-center gap-3 mx-auto active:scale-95 transition-transform"
+          >
+            <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
+              auto_awesome
+            </span>
+            Get Started
+          </button>
+        </section>
+
+        {/* Features Grid */}
+        <section className="mb-xl">
+          <h3 className="font-headline-lg text-headline-lg text-on-surface text-center mb-lg">
+            Powered by Advanced AI
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+            <div className="bg-surface-container-low rounded-xl p-md text-center">
+              <span className="material-symbols-outlined text-primary text-3xl mb-sm">psychology</span>
+              <h4 className="font-title-md text-title-md text-on-surface mb-xs">Smart Preferences</h4>
+              <p className="font-body-sm text-body-sm text-on-surface-variant">
+                Learns your taste patterns and dietary preferences over time
+              </p>
+            </div>
+            
+            <div className="bg-surface-container-low rounded-xl p-md text-center">
+              <span className="material-symbols-outlined text-secondary text-3xl mb-sm">location_on</span>
+              <h4 className="font-title-md text-title-md text-on-surface mb-xs">Multi-City Support</h4>
+              <p className="font-body-sm text-body-sm text-on-surface-variant">
+                Optimized recommendations across multiple cities
+              </p>
+            </div>
+            
+            <div className="bg-surface-container-low rounded-xl p-md text-center">
+              <span className="material-symbols-outlined text-tertiary text-3xl mb-sm">star</span>
+              <h4 className="font-title-md text-title-md text-on-surface mb-xs">Hybrid Ranking</h4>
+              <p className="font-body-sm text-body-sm text-on-surface-variant">
+                Combines AI, vector search, and traditional ranking
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* How It Works */}
+        <section className="mb-xl">
+          <h3 className="font-headline-lg text-headline-lg text-on-surface text-center mb-lg">
+            How It Works
+          </h3>
+          <div className="space-y-lg">
+            <div className="flex items-center gap-md">
+              <div className="w-12 h-12 bg-primary text-on-primary rounded-full flex items-center justify-center font-title-md flex-shrink-0">
+                1
+              </div>
+              <div>
+                <h4 className="font-title-md text-title-md text-on-surface mb-xs">Set Your Preferences</h4>
+                <p className="font-body-sm text-body-sm text-on-surface-variant">
+                  Tell us about your budget, cuisine preferences, and dietary requirements
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-md">
+              <div className="w-12 h-12 bg-primary text-on-primary rounded-full flex items-center justify-center font-title-md flex-shrink-0">
+                2
+              </div>
+              <div>
+                <h4 className="font-title-md text-title-md text-on-surface mb-xs">AI Analysis</h4>
+                <p className="font-body-sm text-body-sm text-on-surface-variant">
+                  Our AI analyzes thousands of restaurants to find your perfect matches
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-md">
+              <div className="w-12 h-12 bg-primary text-on-primary rounded-full flex items-center justify-center font-title-md flex-shrink-0">
+                3
+              </div>
+              <div>
+                <h4 className="font-title-md text-title-md text-on-surface mb-xs">Get Recommendations</h4>
+                <p className="font-body-sm text-body-sm text-on-surface-variant">
+                  Receive personalized recommendations with AI match scores and insights
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="text-center py-xl bg-primary-fixed rounded-xl ai-gradient-border">
+          <span className="material-symbols-outlined text-primary text-4xl mb-md">rocket_launch</span>
+          <h3 className="font-headline-lg text-headline-lg text-primary mb-xs">
+            Ready to Discover?
+          </h3>
+          <p className="font-body-lg text-body-lg text-on-surface-variant max-w-lg mx-auto mb-md">
+            Join thousands of food lovers who have found their perfect restaurants with CraveAI
+          </p>
+          <button
+            onClick={handleGetStarted}
+            className="px-6 py-3 bg-primary text-on-primary rounded-xl font-body-lg font-bold active:scale-95 transition-transform"
+          >
+            Start Your Journey
+          </button>
+        </section>
+      </main>
     </div>
   )
 }
