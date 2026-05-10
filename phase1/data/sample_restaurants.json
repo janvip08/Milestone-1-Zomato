@@ -1,0 +1,31 @@
+[
+  {
+    "restaurant_name": "Spice Garden",
+    "city": "Bengaluru",
+    "cuisines": "North Indian, Chinese",
+    "average_cost_for_two": "Rs. 900",
+    "aggregate_rating": "4.2/5"
+  },
+  {
+    "name": "Urban Bites",
+    "location": "Delhi",
+    "cuisine": "Italian",
+    "cost": "1200 for two",
+    "rating": "4.5"
+  },
+  {
+    "name": "Quick N Tasty",
+    "location": "BLR",
+    "cuisine": "Fast Food",
+    "cost_for_two": "450",
+    "rating": "NEW"
+  },
+  {
+    "name": "",
+    "location": "Delhi",
+    "cuisine": "Street Food",
+    "cost_for_two": "300",
+    "rating": "3.9"
+  }
+]
+

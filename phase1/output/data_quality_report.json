@@ -1,0 +1,6 @@
+{
+  "input_count": 1000,
+  "cleaned_count": 997,
+  "dropped_missing_required": 3,
+  "dropped_invalid_rating": 0
+}
