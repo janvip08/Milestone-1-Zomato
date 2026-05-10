@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { RestaurantCard } from './RestaurantCard'
 import { BackButton } from './BackButton'
+import { apiClient, RecommendationRequest } from '@/lib/api'
 
 interface Restaurant {
   id: string
