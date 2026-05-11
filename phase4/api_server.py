@@ -113,11 +113,60 @@ class RecommendationAPI:
         """Load restaurant data from file."""
         try:
             import pandas as pd
-            df = pd.read_csv(self.data_path)
-            return df.to_dict('records')
+            self.logger.info(f"Loading restaurant data from: {self.data_path}")
+            
+            # Try to load CSV first
+            if self.data_path.endswith('.csv'):
+                df = pd.read_csv(self.data_path)
+                self.logger.info(f"Successfully loaded CSV with {len(df)} restaurants")
+                return df.to_dict('records')
+            # Fallback to JSON if CSV doesn't exist
+            else:
+                # Try to load from phase1 processed data
+                json_path = "phase1/output/processed_dataset.json"
+                try:
+                    import json
+                    with open(json_path, 'r') as f:
+                        data = json.load(f)
+                    
+                    # Convert JSON data to proper format
+                    restaurants = []
+                    for item in data:
+                        if isinstance(item, dict) and 'name' in item:
+                            restaurant = {
+                                'name': item.get('name', ''),
+                                'location': item.get('location', ''),
+                                'cuisines': item.get('cuisines', ''),
+                                'cost_for_two': item.get('cost_for_two', 0),
+                                'rating': item.get('rating', 0.0),
+                                'cost_indication': self._get_cost_indication(item.get('cost_for_two', 0)),
+                                'best_for': 'Family Meal',
+                                'highlights': ['Good food', 'Reasonable prices'],
+                                'reasons': ['Matches your preferences']
+                            }
+                            restaurants.append(restaurant)
+                    
+                    self.logger.info(f"Successfully loaded JSON with {len(restaurants)} restaurants")
+                    return restaurants
+                    
+                except FileNotFoundError:
+                    self.logger.error(f"JSON data file not found: {json_path}")
+                    return []
+                    
         except Exception as e:
             self.logger.error(f"Failed to load restaurant data: {e}")
             return []
+    
+    def _get_cost_indication(self, cost_for_two: int) -> str:
+        """Get cost indication based on cost for two."""
+        if cost_for_two <= 500:
+            return "Budget-friendly"
+        elif cost_for_two <= 1000:
+            return "Moderate"
+        elif cost_for_two <= 1500:
+            return "Premium"
+        else:
+            return "Fine Dining"
     
     def _setup_routes(self):
         """Setup API routes."""
@@ -154,17 +203,22 @@ class RecommendationAPI:
             start_time = datetime.now()
             
             try:
+                self.logger.info(f"Received recommendation request: {request.preferences.dict()}")
+                
                 # Parse preferences
                 parsed_preferences = self.preference_parser.parse_preferences(
                     request.preferences.dict()
                 )
+                self.logger.info(f"Parsed preferences: {parsed_preferences}")
                 
                 # Filter candidates
                 candidates = self.filter_engine.filter_restaurants(
                     self.restaurants_data, parsed_preferences
                 )
+                self.logger.info(f"Found {len(candidates)} candidates after filtering")
                 
                 if not candidates:
+                    self.logger.warning("No candidates found after filtering")
                     # Use fallback handler
                     fallback_response = self.fallback_handler.handle_no_matches(
                         parsed_preferences
@@ -179,35 +233,44 @@ class RecommendationAPI:
                 
                 # Get recommendations using Phase 3
                 if request.response_type == "recommendation":
+                    self.logger.info("Generating recommendations using Phase 3 pipeline")
                     result = self.phase3_pipeline.generate_recommendations(
                         candidates[:request.max_recommendations],
                         parsed_preferences,
                         additional_instructions=request.preferences.additional_requirements
                     )
+                    self.logger.info(f"Phase 3 result: {result}")
                 elif request.response_type == "ranking":
+                    self.logger.info("Generating ranking using Phase 3 pipeline")
                     result = self.phase3_pipeline.generate_ranking(
                         candidates[:request.max_recommendations],
                         parsed_preferences,
                         additional_instructions=request.preferences.additional_requirements
                     )
+                    self.logger.info(f"Phase 3 ranking result: {result}")
                 elif request.response_type == "explanation":
+                    self.logger.info("Generating explanations using Phase 3 pipeline")
                     result = self.phase3_pipeline.generate_explanations(
                         candidates[:request.max_recommendations],
                         parsed_preferences,
                         additional_instructions=request.preferences.additional_requirements
                     )
+                    self.logger.info(f"Phase 3 explanation result: {result}")
                 else:
                     raise HTTPException(status_code=400, detail=f"Unknown response type: {request.response_type}")
                 
                 # Calculate response time
                 response_time = int((datetime.now() - start_time).total_seconds() * 1000)
+                final_recommendations = result.get("recommendations", result.get("ranked_restaurants", result.get("detailed_explanations", [])))
+                
+                self.logger.info(f"Final recommendations to return: {final_recommendations}")
                 
                 return RecommendationResponse(
-                    recommendations=result.get("recommendations", result.get("ranked_restaurants", result.get("detailed_explanations", []))),
-                    summary=result.get("summary", ""),
+                    recommendations=final_recommendations,
+                    summary=result.get("summary", f"Found {len(final_recommendations)} recommendations for {parsed_preferences.get('location', 'your location')}"),
                     total_matches=len(candidates),
                     response_time_ms=response_time,
-                    metadata=result.get("metadata", {})
+                    metadata=result.get("metadata", {"pipeline_used": "phase3", "candidates_count": len(candidates)})
                 )
                 
             except Exception as e:
@@ -232,7 +295,7 @@ class RecommendationAPI:
                     restaurants = [r for r in restaurants if location.lower() in r.get("location", "").lower()]
                 
                 if cuisine:
-                    restaurants = [r for r in restaurants if cuisine.lower() in r.get("cuisine", "").lower()]
+                    restaurants = [r for r in restaurants if cuisine.lower() in r.get("cuisines", "").lower()]
                 
                 return {
                     "restaurants": restaurants[:limit],

@@ -123,26 +123,39 @@ class PresentationLayer:
             st.error("Please enter a location to get recommendations")
             return
         
+        st.info(f"🔍 Searching for restaurants in {preferences.get('location', 'your location')}...")
+        st.info(f"🍽 Cuisine: {preferences.get('cuisine', 'Any')}")
+        st.info(f"💰 Budget: {preferences.get('budget_category', 'Any')}")
+        st.info(f"⭐ Min Rating: {preferences.get('min_rating', 3.0)}")
+        
         with st.spinner("Getting AI recommendations..."):
             try:
                 # Call API
+                request_data = {
+                    "preferences": preferences,
+                    "max_recommendations": 5,
+                    "response_type": "recommendation",
+                    "include_explanations": True
+                }
+                
+                st.info(f"📡 Sending request to: {self.api_base_url}/recommend")
+                st.json(request_data)
+                
                 response = requests.post(
                     f"{self.api_base_url}/recommend",
-                    json={
-                        "preferences": preferences,
-                        "max_recommendations": 5,
-                        "response_type": "recommendation",
-                        "include_explanations": True
-                    },
+                    json=request_data,
                     timeout=30
                 )
                 
                 if response.status_code == 200:
                     result = response.json()
+                    st.success(f"✅ Successfully got recommendations! Found {len(result.get('recommendations', []))} restaurants")
+                    st.json(result, expanded=False)
                     self.display_recommendations(result)
                 else:
-                    st.error(f"Failed to get recommendations: {response.status_code}")
-                    st.error(response.text)
+                    st.error(f"❌ Failed to get recommendations: {response.status_code}")
+                    st.error(f"📝 Response text: {response.text}")
+                    st.info("🔧 Check that the API server is running on http://localhost:8000")
                     
             except requests.exceptions.RequestException as e:
                 st.error(f"Connection error: {e}")
@@ -315,6 +328,18 @@ def create_streamlit_app(api_base_url: str = "http://localhost:8000"):
     app.run()
 
 
+def create_modern_streamlit_app(api_base_url: str = "http://localhost:8000"):
+    """
+    Create modern Streamlit app instance.
+    
+    Args:
+        api_base_url: Base URL for the recommendation API
+    """
+    from .modern_streamlit_app import ModernRestaurantApp
+    app = ModernRestaurantApp(api_base_url)
+    app.run()
+
+
 if __name__ == "__main__":
-    # Run the Streamlit app
-    create_streamlit_app()
+    # Run modern Streamlit app
+    create_modern_streamlit_app()
