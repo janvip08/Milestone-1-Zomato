@@ -194,10 +194,9 @@ plotly>=5.15.0
                         },
                         {
                             'name': 'Deploy to Streamlit Cloud',
-                            'run': |
-                                echo "Uploading to Streamlit Cloud..."
-                                # Streamlit Cloud deployment commands would go here
-                                # This would use streamlit CLI or API
+                            'run': '''echo "Uploading to Streamlit Cloud..."
+# Streamlit Cloud deployment commands would go here
+# This would use streamlit CLI or API'''
                         }
                     ]
                 }
