@@ -6,23 +6,10 @@ import { RestaurantCard } from './RestaurantCard'
 import { BackButton } from './BackButton'
 import { apiClient, RecommendationRequest } from '@/lib/api'
 
-interface Restaurant {
-  id: string
-  name: string
-  cuisine: string
-  rating: number
-  costForTwo: number
-  location: string
-  specialties: string[]
-  recommendationReason: string
-  priceRange: string
-  imageUrl?: string
-  aiScore?: number
-}
 
 export default function RecommendationsPage() {
   const router = useRouter()
-  const [restaurants, setRestaurants] = useState<Restaurant[]>([])
+  const [restaurants, setRestaurants] = useState<any[]>([])
   const [preferences, setPreferences] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
 
