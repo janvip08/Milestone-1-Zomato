@@ -464,7 +464,7 @@ class PolishedAIRestaurantApp:
         )
 
     def get_recommendations(self, preferences: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """POST /recommend — unchanged contract."""
+        """POST /recommend — graceful fallback for portfolio demo mode."""
         try:
             budget_api_value = self._budget_label_to_api_value(str(preferences.get("budget_label", "")))
             payload = {
@@ -483,18 +483,215 @@ class PolishedAIRestaurantApp:
             response = requests.post(
                 f"{self.api_base_url}/recommend",
                 json=payload,
-                timeout=30,
+                timeout=5,
             )
             if response.status_code == 200:
                 return response.json()
-            st.error(f"API Error: {response.status_code} - {response.text}")
-            return None
-        except requests.exceptions.RequestException as e:
-            st.error(f"Connection error: {str(e)}")
-            return None
-        except Exception as e:
-            st.error(f"Unexpected error: {str(e)}")
-            return None
+            return self._get_mock_recommendations(preferences)
+        except (requests.exceptions.RequestException, Exception) as e:
+            logger.warning(f"Backend unavailable, falling back to demo mode: {e}")
+            return self._get_mock_recommendations(preferences)
+
+    def _get_mock_recommendations(self, preferences: Dict[str, Any]) -> Dict[str, Any]:
+        """Fallback mock data when backend is unavailable (e.g., Streamlit Cloud)."""
+        top_n = int(preferences.get("top_n", 5))
+        all_mocks = [
+            {
+                "rank": 1,
+                "restaurant_name": "Truffles & Co.",
+                "cuisine": "Italian",
+                "rating": 4.8,
+                "price_indication": "$$$",
+                "match_score": 0.96,
+                "best_for": "Date Night",
+                "reasons": [
+                    "Perfectly matches your preference for high-rated cuisine.",
+                    "Known for cozy ambiance and excellent pasta dishes.",
+                    "Highly recommended by food critics in the area."
+                ],
+                "highlights": [
+                    "Cuisine: Italian",
+                    "Rating: 4.8",
+                    "Location: Downtown"
+                ]
+            },
+            {
+                "rank": 2,
+                "restaurant_name": "Spice Route",
+                "cuisine": "Indian",
+                "rating": 4.6,
+                "price_indication": "$",
+                "match_score": 0.92,
+                "best_for": "Casual Dining",
+                "reasons": [
+                    "Highly rated spot with authentic, bold flavors.",
+                    "Offers great value for money and large portions."
+                ],
+                "highlights": [
+                    "Cuisine: Indian",
+                    "Rating: 4.6",
+                    "Location: Midtown"
+                ]
+            },
+            {
+                "rank": 3,
+                "restaurant_name": "Zen Sushi",
+                "cuisine": "Japanese",
+                "rating": 4.9,
+                "price_indication": "$$$",
+                "match_score": 0.89,
+                "best_for": "Fine Dining",
+                "reasons": [
+                    "Exceptional quality cuisine with fresh ingredients.",
+                    "Features a renowned omakase experience."
+                ],
+                "highlights": [
+                    "Cuisine: Japanese",
+                    "Rating: 4.9",
+                    "Location: Uptown"
+                ]
+            },
+            {
+                "rank": 4,
+                "restaurant_name": "El Camino",
+                "cuisine": "Mexican",
+                "rating": 4.5,
+                "price_indication": "$$",
+                "match_score": 0.86,
+                "best_for": "Group Hangouts",
+                "reasons": [
+                    "Vibrant atmosphere ideal for groups and celebrations.",
+                    "Known for excellent tacos and margaritas."
+                ],
+                "highlights": [
+                    "Cuisine: Mexican",
+                    "Rating: 4.5",
+                    "Location: Westside"
+                ]
+            },
+            {
+                "rank": 5,
+                "restaurant_name": "The Rustic Grill",
+                "cuisine": "American",
+                "rating": 4.7,
+                "price_indication": "$$",
+                "match_score": 0.82,
+                "best_for": "Comfort Food",
+                "reasons": [
+                    "Hearty classics with a modern, elevated twist.",
+                    "Great service and warm rustic interior."
+                ],
+                "highlights": [
+                    "Cuisine: American",
+                    "Rating: 4.7",
+                    "Location: Riverside"
+                ]
+            },
+            {
+                "rank": 6,
+                "restaurant_name": "Bistro Pierre",
+                "cuisine": "French",
+                "rating": 4.8,
+                "price_indication": "$$$",
+                "match_score": 0.79,
+                "best_for": "Special Occasions",
+                "reasons": [
+                    "Classic French dishes crafted with precision.",
+                    "Extensive wine list matching your upscale taste."
+                ],
+                "highlights": [
+                    "Cuisine: French",
+                    "Rating: 4.8",
+                    "Location: Historic District"
+                ]
+            },
+            {
+                "rank": 7,
+                "restaurant_name": "Seoul Kitchen",
+                "cuisine": "Korean",
+                "rating": 4.6,
+                "price_indication": "$$",
+                "match_score": 0.77,
+                "best_for": "Late Night",
+                "reasons": [
+                    "Authentic Korean BBQ experience with interactive dining.",
+                    "Vibrant late-night energy and great side dishes."
+                ],
+                "highlights": [
+                    "Cuisine: Korean",
+                    "Rating: 4.6",
+                    "Location: Eastside"
+                ]
+            },
+            {
+                "rank": 8,
+                "restaurant_name": "Thai Spice",
+                "cuisine": "Thai",
+                "rating": 4.4,
+                "price_indication": "$",
+                "match_score": 0.75,
+                "best_for": "Quick Bite",
+                "reasons": [
+                    "Fast, flavorful, and incredibly consistent.",
+                    "Perfect for spicy food lovers."
+                ],
+                "highlights": [
+                    "Cuisine: Thai",
+                    "Rating: 4.4",
+                    "Location: University Area"
+                ]
+            },
+            {
+                "rank": 9,
+                "restaurant_name": "Dragon Wok",
+                "cuisine": "Chinese",
+                "rating": 4.5,
+                "price_indication": "$$",
+                "match_score": 0.71,
+                "best_for": "Family Dinner",
+                "reasons": [
+                    "Extensive menu with traditional and modern dishes.",
+                    "Spacious seating perfectly suited for families."
+                ],
+                "highlights": [
+                    "Cuisine: Chinese",
+                    "Rating: 4.5",
+                    "Location: Suburbs"
+                ]
+            },
+            {
+                "rank": 10,
+                "restaurant_name": "The Continental",
+                "cuisine": "Continental",
+                "rating": 4.3,
+                "price_indication": "$$$",
+                "match_score": 0.68,
+                "best_for": "Business Lunch",
+                "reasons": [
+                    "Quiet, professional atmosphere.",
+                    "Diverse menu appealing to a wide range of palates."
+                ],
+                "highlights": [
+                    "Cuisine: Continental",
+                    "Rating: 4.3",
+                    "Location: Financial District"
+                ]
+            }
+        ]
+        
+        req_cuisine = preferences.get("cuisine", "")
+        if req_cuisine:
+            match_idx = next((i for i, r in enumerate(all_mocks) if r["cuisine"].lower() == req_cuisine.lower()), -1)
+            if match_idx > 0:
+                all_mocks.insert(0, all_mocks.pop(match_idx))
+                for i, r in enumerate(all_mocks):
+                    r["rank"] = i + 1
+
+        return {
+            "is_demo": True,
+            "summary": "These are curated demo recommendations showcasing the AI matching capabilities while the live backend is offline.",
+            "recommendations": all_mocks[:top_n]
+        }
 
     def render_recommendation_card(self, recommendation: Dict[str, Any], index: int) -> None:
         """One HTML block per card; all dynamic text escaped — no raw markup leakage."""
@@ -613,6 +810,15 @@ class PolishedAIRestaurantApp:
 
             if recommendations:
                 st.markdown("---")
+                if recommendations.get("is_demo"):
+                    st.markdown(
+                        '<div style="text-align: center; margin-bottom: 0.5rem;">'
+                        '<span style="background: rgba(226,55,68,0.15); color: var(--accent-2); '
+                        'padding: 0.35rem 0.75rem; border-radius: 999px; font-size: 0.75rem; '
+                        'font-weight: 700; border: 1px solid rgba(226,55,68,0.25);">'
+                        '✨ Demo AI recommendations</span></div>',
+                        unsafe_allow_html=True
+                    )
                 st.markdown('<p class="results-heading">Your picks</p>', unsafe_allow_html=True)
                 recs = recommendations.get("recommendations") or []
                 if recs:
