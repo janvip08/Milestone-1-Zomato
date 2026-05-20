@@ -2,14 +2,28 @@
 
 from typing import Dict, Any, List, Optional
 import logging
+import os
 from datetime import datetime
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 import uvicorn
+from dotenv import load_dotenv
 
-from ..phase2 import PreferenceParser, FilterEngine, RankerV1
-from ..phase3 import Phase3Pipeline, create_default_config
+# Load environment variables
+load_dotenv()
+
+# Debug environment variable loading
+groq_api_key = os.getenv("GROQ_API_KEY")
+if groq_api_key:
+    masked_key = groq_api_key[:4] + "****" + groq_api_key[-4:] if len(groq_api_key) > 8 else groq_api_key
+    print(f"GROQ_API_KEY loaded successfully: {masked_key}")
+else:
+    print("GROQ_API_KEY not found in environment variables")
+    print("Please set GROQ_API_KEY in your .env file or system environment")
+
+from phase2 import PreferenceParser, FilterEngine, RankerV1
+from phase3 import Phase3Pipeline, create_default_config
 from .groq_provider import create_phase3_config_with_groq
 from .error_handler import ErrorHandler, FallbackHandler
 
@@ -93,13 +107,20 @@ class RecommendationAPI:
         self.ranker_v1 = RankerV1()
         
         # Initialize Phase 3 pipeline with Groq
+        print(f"Initializing Phase 3 pipeline with Groq...")
         self.phase3_config = create_phase3_config_with_groq(
             groq_api_key=groq_api_key,
-            model_name="llama3-8b-8192",
+            model_name="llama-3.1-8b-instant",
             max_tokens=1500,
             temperature=0.7
         )
+        print(f"Phase 3 config created successfully")
+        print(f"LLM provider: {self.phase3_config.llm_config.provider}")
+        print(f"Model: {self.phase3_config.llm_config.model_name}")
+        print(f"Max candidates: {self.phase3_config.max_candidates}")
+        
         self.phase3_pipeline = Phase3Pipeline(self.phase3_config)
+        print(f"Phase 3 pipeline initialized successfully")
         
         # Load data
         self.restaurants_data = self._load_restaurant_data()
@@ -206,13 +227,13 @@ class RecommendationAPI:
                 self.logger.info(f"Received recommendation request: {request.preferences.dict()}")
                 
                 # Parse preferences
-                parsed_preferences = self.preference_parser.parse_preferences(
+                parsed_preferences = self.preference_parser.parse(
                     request.preferences.dict()
                 )
                 self.logger.info(f"Parsed preferences: {parsed_preferences}")
                 
                 # Filter candidates
-                candidates = self.filter_engine.filter_restaurants(
+                candidates = self.filter_engine.filter(
                     self.restaurants_data, parsed_preferences
                 )
                 self.logger.info(f"Found {len(candidates)} candidates after filtering")
@@ -224,11 +245,11 @@ class RecommendationAPI:
                         parsed_preferences
                     )
                     return RecommendationResponse(
-                        recommendations=[],
-                        summary=fallback_response["message"],
-                        total_matches=0,
+                        recommendations=fallback_response.get("recommendations", []),
+                        summary=fallback_response.get("summary", "No restaurants found matching your criteria. Here are some popular alternatives."),
+                        total_matches=fallback_response.get("total_matches", 0),
                         response_time_ms=int((datetime.now() - start_time).total_seconds() * 1000),
-                        metadata={"fallback_used": True}
+                        metadata={"fallback_used": True, "suggestions": fallback_response.get("suggestions", [])}
                     )
                 
                 # Get recommendations using Phase 3

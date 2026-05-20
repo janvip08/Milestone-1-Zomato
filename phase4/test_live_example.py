@@ -121,7 +121,7 @@ def test_groq_connection():
         # Create Groq config
         config = create_groq_config(
             api_key=groq_api_key,
-            model_name="llama3-8b-8192",
+            model_name="llama-3.1-8b-instant",
             temperature=0.7
         )
         

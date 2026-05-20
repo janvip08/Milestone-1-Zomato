@@ -56,7 +56,7 @@ class Phase4App:
         # Initialize Phase 3 pipeline with Groq
         self.phase3_config = create_phase3_config_with_groq(
             groq_api_key=config.groq_api_key,
-            model_name="llama3-8b-8192",
+            model_name="llama-3.1-8b-instant",
             max_tokens=1500,
             temperature=0.7
         )

@@ -14,7 +14,7 @@ from phase3.llm_client import LLMProvider, LLMConfig
 class GroqConfig:
     """Configuration for Groq provider."""
     api_key: str
-    model_name: str = "llama3-8b-8192"
+    model_name: str = "llama-3.1-8b-instant"
     api_base: str = "https://api.groq.com/openai/v1"
     max_tokens: int = 2000
     temperature: float = 0.7
@@ -40,7 +40,7 @@ class GroqProvider(LLMProvider):
         
         # Available Groq models
         self.available_models = {
-            "llama3-8b-8192": "Llama 3 8B (8K context)",
+            "llama-3.1-8b-instant": "Llama 3 8B (8K context)",
             "llama3-70b-8192": "Llama 3 70B (8K context)",
             "mixtral-8x7b-32768": "Mixtral 8x7B (32K context)",
             "gemma-7b-it": "Gemma 7B (Instruction Tuned)"
@@ -120,7 +120,7 @@ class GroqProvider(LLMProvider):
 
 def create_groq_config(
     api_key: str,
-    model_name: str = "llama3-8b-8192",
+    model_name: str = "llama-3.1-8b-instant",
     **kwargs
 ) -> GroqConfig:
     """
@@ -143,11 +143,11 @@ def create_groq_config(
 
 def create_phase3_config_with_groq(
     groq_api_key: str,
-    model_name: str = "llama3-8b-8192",
+    model_name: str = "llama-3.1-8b-instant",
     **kwargs
-) -> LLMConfig:
+):
     """
-    Create Phase 3 LLMConfig with Groq provider.
+    Create Phase 3 Phase3Config with Groq provider.
     
     Args:
         groq_api_key: Groq API key
@@ -155,11 +155,25 @@ def create_phase3_config_with_groq(
         **kwargs: Additional configuration parameters
         
     Returns:
-        LLMConfig object compatible with Phase 3
+        Phase3Config object compatible with Phase 3 pipeline
     """
-    return LLMConfig(
+    from phase3.pipeline import Phase3Config
+    from phase3.llm_client import LLMConfig
+    
+    # Create LLMConfig first
+    llm_config = LLMConfig(
         provider="groq",
         model_name=model_name,
         api_key=groq_api_key,
         **kwargs
+    )
+    
+    # Create Phase3Config with all required attributes
+    return Phase3Config(
+        llm_config=llm_config,
+        max_candidates=kwargs.get("max_candidates", 10),
+        prompt_template=kwargs.get("prompt_template", "recommendation"),
+        system_persona=kwargs.get("system_persona", "restaurant expert"),
+        enable_retry=kwargs.get("enable_retry", True),
+        validate_responses=kwargs.get("validate_responses", True)
     )

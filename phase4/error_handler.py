@@ -183,7 +183,7 @@ class FallbackHandler:
             }
         ]
     
-    def handle_no_matches(self, preferences: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_no_matches(self, preferences) -> Dict[str, Any]:
         """
         Handle case when no restaurants match user preferences.
         
@@ -193,8 +193,8 @@ class FallbackHandler:
         Returns:
             Fallback response with suggestions
         """
-        location = preferences.get("location", "").lower()
-        cuisine = preferences.get("cuisine", "").lower()
+        location = preferences.location.lower() if preferences.location else ""
+        cuisine = preferences.cuisine.lower() if preferences.cuisine else ""
         
         # Get location-specific recommendations
         recommendations = []
@@ -286,27 +286,28 @@ class FallbackHandler:
         
         return formatted
     
-    def _create_no_match_summary(self, preferences: Dict[str, Any]) -> str:
+    def _create_no_match_summary(self, preferences) -> str:
         """Create summary for no-match scenarios."""
-        location = preferences.get("location", "your area")
-        cuisine = preferences.get("cuisine", "your preferred cuisine")
+        location = preferences.location if preferences.location else "your area"
+        cuisine = preferences.cuisine if preferences.cuisine else "your preferred cuisine"
         
         summary = f"No exact matches found for {cuisine} restaurants in {location}. "
         summary += "Here are some popular alternatives that you might enjoy:"
         
         return summary
     
-    def _get_suggestions(self, preferences: Dict[str, Any]) -> List[str]:
+    def _get_suggestions(self, preferences) -> List[str]:
         """Get suggestions for improving search results."""
         suggestions = []
         
-        if preferences.get("min_rating", 0) > 4.0:
+        if preferences.min_rating and preferences.min_rating > 4.0:
             suggestions.append("Try lowering the minimum rating requirement")
         
-        if preferences.get("max_cost_for_two", 0) < 500:
-            suggestions.append("Consider increasing your budget range")
+        # Note: UserPreferences doesn't have max_cost_for_two, so we skip this check
+        # if preferences.max_cost_for_two and preferences.max_cost_for_two < 500:
+        #     suggestions.append("Consider increasing your budget range")
         
-        if preferences.get("cuisine"):
+        if preferences.cuisine:
             suggestions.append("Try browsing without a specific cuisine filter")
         
         suggestions.append("Check if the location name is spelled correctly")

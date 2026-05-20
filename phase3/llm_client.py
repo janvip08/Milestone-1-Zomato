@@ -157,6 +157,82 @@ class LocalProvider(LLMProvider):
             raise Exception(f"Local LLM API request failed: {e}")
 
 
+class GroqProvider(LLMProvider):
+    """Groq API provider."""
+    
+    def __init__(self, config: LLMConfig):
+        self.config = config
+        self.api_key = config.api_key
+        self.api_base = config.api_base or "https://api.groq.com/openai/v1"
+        
+    def generate_response(self, prompt: str, system_prompt: str = "") -> str:
+        """Generate response using Groq API."""
+        import requests
+        import ssl
+        import certifi
+        import os
+        
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        data = {
+            "model": self.config.model_name,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": prompt}
+            ],
+            "max_tokens": self.config.max_tokens,
+            "temperature": self.config.temperature
+        }
+        
+        try:
+            # Try with proper SSL verification first (production-safe)
+            response = requests.post(
+                f"{self.api_base}/chat/completions",
+                headers=headers,
+                json=data,
+                timeout=self.config.timeout,
+                verify=certifi.where()
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                return result["choices"][0]["message"]["content"]
+            else:
+                raise Exception(f"Groq API error: {response.status_code} - {response.text}")
+                
+        except requests.exceptions.SSLError as ssl_error:
+            # Fallback for local development SSL issues
+            print(f"SSL verification failed, attempting fallback for local development...")
+            try:
+                # Try with SSL verification disabled (local development only)
+                response = requests.post(
+                    f"{self.api_base}/chat/completions",
+                    headers=headers,
+                    json=data,
+                    timeout=self.config.timeout,
+                    verify=False
+                )
+                
+                # Suppress SSL warning for local development
+                import urllib3
+                urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+                
+                if response.status_code == 200:
+                    result = response.json()
+                    return result["choices"][0]["message"]["content"]
+                else:
+                    raise Exception(f"Groq API error: {response.status_code} - {response.text}")
+                    
+            except Exception as fallback_error:
+                raise Exception(f"Groq API SSL fallback failed: {fallback_error}")
+                
+        except Exception as e:
+            raise Exception(f"Groq API request failed: {e}")
+
+
 class LLMClient:
     """Main LLM client that handles different providers and error management."""
     
@@ -178,7 +254,8 @@ class LLMClient:
             "anthropic": AnthropicProvider,
             "claude": AnthropicProvider,
             "local": LocalProvider,
-            "ollama": LocalProvider
+            "ollama": LocalProvider,
+            "groq": GroqProvider
         }
         
         provider_class = provider_map.get(config.provider.lower())

@@ -25,7 +25,7 @@ Fast LLM inference using Groq API with optimized models.
 - Connection testing and health checks
 
 **Supported Models:**
-- `llama3-8b-8192`: Llama 3 8B (8K context)
+- `llama-3.1-8b-instant`: Llama 3.1 8B (Fast inference)
 - `llama3-70b-8192`: Llama 3 70B (8K context)  
 - `mixtral-8x7b-32768`: Mixtral 8x7B (32K context)
 - `gemma-7b-it`: Gemma 7B (Instruction Tuned)
@@ -279,7 +279,7 @@ from phase4.groq_provider import create_groq_config
 
 config = create_groq_config(
     api_key="your-api-key",
-    model_name="llama3-8b-8192",
+    model_name="llama-3.1-8b-instant",
     temperature=0.7,
     max_tokens=1500
 )
@@ -357,7 +357,7 @@ print(f"Test passed: {success}")
 
 ### Optimization Tips
 
-1. **Model Selection**: Use `llama3-8b-8192` for fastest response
+1. **Model Selection**: Use `llama-3.1-8b-instant` for fastest response
 2. **Candidate Limiting**: Reduce `max_recommendations` for faster processing
 3. **Caching**: Enable response caching for repeated queries
 4. **Batch Processing**: Process multiple requests in parallel
