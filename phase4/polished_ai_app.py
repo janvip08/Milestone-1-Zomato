@@ -3,8 +3,10 @@ Personalized Restaurant Recommendation Engine — consumer-grade Streamlit UI.
 Warm dark theme inspired by modern food discovery apps; backend unchanged.
 """
 
+import base64
 import html
 import logging
+import os
 from typing import Any, Dict, List, Optional, Tuple
 
 import requests
@@ -49,27 +51,39 @@ class PolishedAIRestaurantApp:
 
     @staticmethod
     def get_restaurant_image(cuisine: Optional[str]) -> str:
-        """Returns a stable public image URL based on cuisine with a reliable default fallback."""
-        DEFAULT_IMAGE = "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80"
+        """Returns a stable base64-encoded local image to prevent Streamlit Cloud broken URLs."""
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        assets_dir = os.path.join(current_dir, "assets")
         
-        if not cuisine:
-            return DEFAULT_IMAGE
-            
         cuisine_map = {
-            "indian": "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=800&q=80",
-            "continental": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80",
-            "chinese": "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&q=80",
-            "italian": "https://images.unsplash.com/photo-1498579150354-977475b0ea0b?w=800&q=80",
-            "cafe": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&q=80",
-            "fine dining": "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&q=80",
+            "indian": "indian.jpg",
+            "continental": "default.jpg",
+            "chinese": "chinese.jpg",
+            "italian": "italian.jpg",
+            "cafe": "cafe.jpg",
+            "fine dining": "fine_dining.jpg",
+            "japanese": "japanese.jpg"
         }
         
-        key = str(cuisine).strip().lower()
-        for mapped_key, url in cuisine_map.items():
-            if mapped_key in key:
-                return url
-                
-        return DEFAULT_IMAGE
+        filename = "default.jpg"
+        if cuisine:
+            key = str(cuisine).strip().lower()
+            for mapped_key, fname in cuisine_map.items():
+                if mapped_key in key:
+                    filename = fname
+                    break
+                    
+        filepath = os.path.join(assets_dir, filename)
+        if not os.path.exists(filepath):
+            filepath = os.path.join(assets_dir, "default.jpg")
+            
+        try:
+            with open(filepath, "rb") as f:
+                encoded = base64.b64encode(f.read()).decode("utf-8")
+                return f"data:image/jpeg;base64,{encoded}"
+        except Exception as e:
+            logger.warning(f"Failed to load local image {filepath}: {e}")
+            return ""
 
     def setup_page_config(self):
         st.set_page_config(
@@ -770,7 +784,7 @@ class PolishedAIRestaurantApp:
 
         card_html = f"""<article class="food-card">
 <div class="food-card__media">
-<img src="{html.escape(img_url)}" alt="{alt}" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='{html.escape(fallback_img)}';" />
+<img src="{img_url}" alt="{alt}" loading="lazy" />
 </div>
 <div class="food-card__body">
 <h2 class="food-card__title">{name}</h2>
@@ -810,8 +824,12 @@ class PolishedAIRestaurantApp:
         preferences = self.get_user_preferences()
 
         if self.render_cta_button():
-            self.render_loading_state()
+            loading_placeholder = st.empty()
+            with loading_placeholder:
+                self.render_loading_state()
+                
             recommendations = self.get_recommendations(preferences)
+            loading_placeholder.empty()
 
             if recommendations:
                 st.markdown("---")
