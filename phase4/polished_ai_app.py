@@ -13,20 +13,7 @@ import streamlit as st
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Cuisine → banner images (Unsplash, stable IDs — portfolio placeholders)
-CUISINE_BANNER_URLS: Dict[str, str] = {
-    "italian": "https://images.unsplash.com/photo-1498579150354-977475b0ea0b?w=960&h=480&fit=crop&q=80",
-    "indian": "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=960&h=480&fit=crop&q=80",
-    "chinese": "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=960&h=480&fit=crop&q=80",
-    "japanese": "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=960&h=480&fit=crop&q=80",
-    "mexican": "https://images.unsplash.com/photo-1565299585323-38174c871b49?w=960&h=480&fit=crop&q=80",
-    "thai": "https://images.unsplash.com/photo-1559314809-0d155014e29e?w=960&h=480&fit=crop&q=80",
-    "continental": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=960&h=480&fit=crop&q=80",
-    "american": "https://images.unsplash.com/photo-1550547660-d9450f859349?w=960&h=480&fit=crop&q=80",
-    "korean": "https://images.unsplash.com/photo-1498654896293-e815036825ff?w=960&h=480&fit=crop&q=80",
-    "french": "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=960&h=480&fit=crop&q=80",
-    "default": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=960&h=480&fit=crop&q=80",
-}
+
 
 
 class PolishedAIRestaurantApp:
@@ -61,11 +48,28 @@ class PolishedAIRestaurantApp:
         return cuisine_val, rating_val
 
     @staticmethod
-    def _banner_url_for_cuisine(cuisine_key: Optional[str]) -> str:
-        if not cuisine_key:
-            return CUISINE_BANNER_URLS["default"]
-        key = cuisine_key.strip().lower()
-        return CUISINE_BANNER_URLS.get(key, CUISINE_BANNER_URLS["default"])
+    def get_restaurant_image(cuisine: Optional[str]) -> str:
+        """Returns a stable public image URL based on cuisine with a reliable default fallback."""
+        DEFAULT_IMAGE = "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80"
+        
+        if not cuisine:
+            return DEFAULT_IMAGE
+            
+        cuisine_map = {
+            "indian": "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=800&q=80",
+            "continental": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80",
+            "chinese": "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&q=80",
+            "italian": "https://images.unsplash.com/photo-1498579150354-977475b0ea0b?w=800&q=80",
+            "cafe": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&q=80",
+            "fine dining": "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&q=80",
+        }
+        
+        key = str(cuisine).strip().lower()
+        for mapped_key, url in cuisine_map.items():
+            if mapped_key in key:
+                return url
+                
+        return DEFAULT_IMAGE
 
     def setup_page_config(self):
         st.set_page_config(
@@ -737,7 +741,8 @@ class PolishedAIRestaurantApp:
             banner_key = cuisine_chip.split()[0] if cuisine_chip else None
         elif recommendation.get("cuisine"):
             banner_key = str(recommendation.get("cuisine")).split()[0]
-        img_url = self._banner_url_for_cuisine(banner_key)
+        img_url = self.get_restaurant_image(banner_key)
+        fallback_img = self.get_restaurant_image("default")
         alt = html.escape((name_raw or "Restaurant")[:80])
 
         chips: List[str] = []
@@ -765,7 +770,7 @@ class PolishedAIRestaurantApp:
 
         card_html = f"""<article class="food-card">
 <div class="food-card__media">
-<img src="{html.escape(img_url)}" alt="{alt}" loading="lazy" referrerpolicy="no-referrer" />
+<img src="{html.escape(img_url)}" alt="{alt}" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='{html.escape(fallback_img)}';" />
 </div>
 <div class="food-card__body">
 <h2 class="food-card__title">{name}</h2>
