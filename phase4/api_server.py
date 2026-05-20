@@ -88,10 +88,13 @@ class RecommendationAPI:
             version="1.0.0"
         )
         
-        # Add CORS middleware
+        # Add CORS middleware (Configurable for production Vercel frontend)
+        allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "*")
+        allowed_origins = [origin.strip() for origin in allowed_origins_env.split(",") if origin.strip()]
+        
         self.app.add_middleware(
             CORSMiddleware,
-            allow_origins=["*"],
+            allow_origins=allowed_origins,
             allow_credentials=True,
             allow_methods=["*"],
             allow_headers=["*"],
